@@ -27,6 +27,8 @@ Here's a simple example of how to use the library within a standard http.Handler
 package main
 
 ```go
+package main
+
 import (  
 	"net/http"  
 	"github.com/MintzyG/GoResponse/response" 
@@ -37,7 +39,7 @@ type User struct {
 	Name string `json:"name"`  
 }
 
-func GetUserHandler(w http.ResponseWriter, r \*http.Request) {  
+func GetUserHandler(w http.ResponseWriter, r *http.Request) {  
 	user := User{ID: 1, Name: "John Doe"}
 
 	// Create a 200 OK response with a message and data  
