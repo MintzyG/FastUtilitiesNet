@@ -17,7 +17,9 @@ It is designed to be lightweight, and easily configurable to fit the needs of yo
 ## **💾 Installation**
 
 To install the library, use go get:  
+```bash
 go get github.com/MintzyG/GoResponse/response
+```
 
 ## **🚀 Quick Start**
 
