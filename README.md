@@ -29,32 +29,38 @@ package main
 ```go
 package main
 
-import (  
-	"net/http"  
-	"github.com/MintzyG/GoResponse/response" 
+import (
+	"log"
+	"net/http"
+
+	"github.com/MintzyG/GoResponse/response"
 )
 
-type User struct {  
-	ID   int    `json:"id"`  
-	Name string `json:"name"`  
+type User struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
-func GetUserHandler(w http.ResponseWriter, r *http.Request) {  
+func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := User{ID: 1, Name: "John Doe"}
 
-	// Create a 200 OK response with a message and data  
-	response.OK().  
-		WithMessage("User found successfully").  
-		WithData(user).  
-		Send(w) // Sends the response to the client  
+	// Create a 200 OK response with a message and data
+	response.OK().
+		WithMessage("User found successfully").
+		WithData(user).
+		Send(w) // Sends the response to the client
 }
 
-func main() {  
-	http.HandleFunc("/user", GetUserHandler)  
-	http.ListenAndServe(":8080", nil)  
+func main() {
+	http.HandleFunc("/user", GetUserHandler)
+	log.Println("Server running on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 ```
-
+**Test Command:**
+```bash
+curl -X GET localhost:8080/user
+```
 **Example JSON Output:**  
 ```json
 {  
