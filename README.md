@@ -96,11 +96,11 @@ response.NotFound().
 
 Most methods on the Response struct return the response object, allowing you to chain calls fluently.
 
-* .WithMessage(string): Sets the main message for the response.  
-* .WithData(any): Attaches a payload (struct, map, etc.) to be marshaled as JSON.  
-* .WithModule(string): Specifies the application module this response originated from.  
-* .WithContentType(string): Overrides the default application/json content type.  
-* .AppendTrace(...any): Adds one or more strings or errors to the trace array for debugging.
+* `.WithMessage(string)`: Sets the main message for the response.  
+* `.WithData(any)`: Attaches a payload (struct, map, etc.) to be marshaled as JSON.  
+* `.WithModule(string)`: Specifies the application module this response originated from.  
+* `.WithContentType(string)`: Overrides the default application/json content type.  
+* `.AppendTrace(...any)`: Adds one or more strings or errors to the trace array for debugging.
 
 ### **Handling Validation Errors**
 
