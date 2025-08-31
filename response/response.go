@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
+	"net/url"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -83,33 +86,185 @@ func getConfig() Config {
 	return globalConfig
 }
 
-func newResponseWithCode(code int) *Response {
+func newBaseResponse(code int, msg ...string) *Response {
+	var message string
+	if len(msg) > 0 {
+		message = msg[0]
+	} else {
+		message = ""
+	}
+
 	config := getConfig()
 	return &Response{
 		Code:        code,
+		Message:     message,
 		Timestamp:   time.Now(),
 		ContentType: config.DefaultContentType,
 	}
 }
 
+func Base(cfg ...*Config) *Response {
+	var conf *Config
+	if len(cfg) > 0 && cfg[0] != nil {
+		conf = cfg[0]
+	} else {
+		c := getConfig()
+		conf = &c
+	}
+
+	return &Response{
+		ContentType: conf.DefaultContentType,
+		config:      *conf,
+	}
+}
+
 // Standard HTTP response builders
-func OK() *Response                  { return newResponseWithCode(http.StatusOK) }
-func Created() *Response             { return newResponseWithCode(http.StatusCreated) }
-func Accepted() *Response            { return newResponseWithCode(http.StatusAccepted) }
-func NoContent() *Response           { return newResponseWithCode(http.StatusNoContent) }
-func BadRequest() *Response          { return newResponseWithCode(http.StatusBadRequest) }
-func Unauthorized() *Response        { return newResponseWithCode(http.StatusUnauthorized) }
-func PaymentRequired() *Response     { return newResponseWithCode(http.StatusPaymentRequired) }
-func Forbidden() *Response           { return newResponseWithCode(http.StatusForbidden) }
-func NotFound() *Response            { return newResponseWithCode(http.StatusNotFound) }
-func MethodNotAllowed() *Response    { return newResponseWithCode(http.StatusMethodNotAllowed) }
-func Conflict() *Response            { return newResponseWithCode(http.StatusConflict) }
-func UnprocessableEntity() *Response { return newResponseWithCode(http.StatusUnprocessableEntity) }
-func TooManyRequests() *Response     { return newResponseWithCode(http.StatusTooManyRequests) }
-func InternalServerError() *Response { return newResponseWithCode(http.StatusInternalServerError) }
-func NotImplemented() *Response      { return newResponseWithCode(http.StatusNotImplemented) }
-func BadGateway() *Response          { return newResponseWithCode(http.StatusBadGateway) }
-func ServiceUnavailable() *Response  { return newResponseWithCode(http.StatusServiceUnavailable) }
+func OK(msg ...string) *Response {
+	return newBaseResponse(http.StatusOK, msg...)
+}
+func Created(msg ...string) *Response {
+	return newBaseResponse(http.StatusCreated, msg...)
+}
+func Accepted(msg ...string) *Response {
+	return newBaseResponse(http.StatusAccepted, msg...)
+}
+func NoContent(msg ...string) *Response {
+	return newBaseResponse(http.StatusNoContent, msg...)
+}
+func BadRequest(msg ...string) *Response {
+	return newBaseResponse(http.StatusBadRequest, msg...)
+}
+func Unauthorized(msg ...string) *Response {
+	return newBaseResponse(http.StatusUnauthorized, msg...)
+}
+func PaymentRequired(msg ...string) *Response {
+	return newBaseResponse(http.StatusPaymentRequired, msg...)
+}
+func Forbidden(msg ...string) *Response {
+	return newBaseResponse(http.StatusForbidden, msg...)
+}
+func NotFound(msg ...string) *Response {
+	return newBaseResponse(http.StatusNotFound, msg...)
+}
+func MethodNotAllowed(msg ...string) *Response {
+	return newBaseResponse(http.StatusMethodNotAllowed, msg...)
+}
+func Conflict(msg ...string) *Response {
+	return newBaseResponse(http.StatusConflict, msg...)
+}
+func UnprocessableEntity(msg ...string) *Response {
+	return newBaseResponse(http.StatusUnprocessableEntity, msg...)
+}
+func TooManyRequests(msg ...string) *Response {
+	return newBaseResponse(http.StatusTooManyRequests, msg...)
+}
+func InternalServerError(msg ...string) *Response {
+	return newBaseResponse(http.StatusInternalServerError, msg...)
+}
+func NotImplemented(msg ...string) *Response {
+	return newBaseResponse(http.StatusNotImplemented, msg...)
+}
+func BadGateway(msg ...string) *Response {
+	return newBaseResponse(http.StatusBadGateway, msg...)
+}
+func ServiceUnavailable(msg ...string) *Response {
+	return newBaseResponse(http.StatusServiceUnavailable, msg...)
+}
+
+func (r *Response) applyMessage(msg ...string) *Response {
+	if len(msg) > 0 {
+		r.Message = msg[0]
+	} else {
+		r.Message = ""
+	}
+	return r
+}
+
+func (r *Response) OK(msg ...string) *Response {
+	r.Code = http.StatusOK
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) Created(msg ...string) *Response {
+	r.Code = http.StatusCreated
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) Accepted(msg ...string) *Response {
+	r.Code = http.StatusAccepted
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) NoContent(msg ...string) *Response {
+	r.Code = http.StatusNoContent
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) BadRequest(msg ...string) *Response {
+	r.Code = http.StatusBadRequest
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) Unauthorized(msg ...string) *Response {
+	r.Code = http.StatusUnauthorized
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) PaymentRequired(msg ...string) *Response {
+	r.Code = http.StatusPaymentRequired
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) Forbidden(msg ...string) *Response {
+	r.Code = http.StatusForbidden
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) NotFound(msg ...string) *Response {
+	r.Code = http.StatusNotFound
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) MethodNotAllowed(msg ...string) *Response {
+	r.Code = http.StatusMethodNotAllowed
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) Conflict(msg ...string) *Response {
+	r.Code = http.StatusConflict
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) UnprocessableEntity(msg ...string) *Response {
+	r.Code = http.StatusUnprocessableEntity
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) TooManyRequests(msg ...string) *Response {
+	r.Code = http.StatusTooManyRequests
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) InternalServerError(msg ...string) *Response {
+	r.Code = http.StatusInternalServerError
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) NotImplemented(msg ...string) *Response {
+	r.Code = http.StatusNotImplemented
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) BadGateway(msg ...string) *Response {
+	r.Code = http.StatusBadGateway
+	r.applyMessage(msg...)
+	return r
+}
+func (r *Response) ServiceUnavailable(msg ...string) *Response {
+	r.Code = http.StatusServiceUnavailable
+	r.applyMessage(msg...)
+	return r
+}
 
 type ResponseInterceptor interface {
 	// Called when context is available
@@ -158,44 +313,16 @@ func GetInterceptors() []ResponseInterceptor {
 }
 
 type Response struct {
-	Module      string    `json:"module,omitempty"`
-	Message     string    `json:"message,omitempty"`
-	Data        any       `json:"data,omitempty"`
-	Trace       []string  `json:"trace,omitempty"`
-	Timestamp   time.Time `json:"timestamp,omitempty"`
-	Code        int       `json:"code,omitempty"`
-	ContentType string    `json:"-"`
-}
-
-func New(message string) *Response {
-	config := getConfig()
-	return &Response{
-		Message:     message,
-		Code:        http.StatusOK,
-		Timestamp:   time.Now(),
-		ContentType: config.DefaultContentType,
-	}
-}
-
-func NewError(message string, code int) *Response {
-	config := getConfig()
-	return &Response{
-		Message:     message,
-		Code:        code,
-		Timestamp:   time.Now(),
-		ContentType: config.DefaultContentType,
-	}
-}
-
-func NewSuccess(message string, data any) *Response {
-	config := getConfig()
-	return &Response{
-		Message:     message,
-		Data:        data,
-		Code:        http.StatusOK,
-		Timestamp:   time.Now(),
-		ContentType: config.DefaultContentType,
-	}
+	Module         string         `json:"module,omitempty"`
+	Message        string         `json:"message,omitempty"`
+	Data           any            `json:"data,omitempty"`
+	Trace          []string       `json:"trace,omitempty"`
+	Timestamp      time.Time      `json:"timestamp,omitempty"`
+	PaginationData PaginationMeta `json:"pagination,omitempty"`
+	Code           int            `json:"code,omitempty"`
+	ContentType    string         `json:"-"`
+	TracePrefix    string         `json:"-"`
+	config         Config         `json:"-"`
 }
 
 type ValidationErr struct {
@@ -204,30 +331,137 @@ type ValidationErr struct {
 	Value   any    `json:"value,omitempty"`
 }
 
-func WithValidationErrors(errors any) *Response {
-	var validationErrs []ValidationErr
-
-	switch v := errors.(type) {
-	case ValidationErr:
-		validationErrs = []ValidationErr{v}
-	case []ValidationErr:
-		validationErrs = v
-	default:
-		return InternalServerError().
-			WithMessage("Invalid validation errors type").
-			appendTraceInternal(fmt.Sprintf("Expected ValidationErr or []ValidationErr, got %T", errors))
+func AddValidationErrors(errs ...ValidationErr) *Response {
+	if len(errs) == 0 {
+		return BadRequest("Validation failed")
 	}
 
-	r := BadRequest().WithMessage("Validation failed")
+	r := BadRequest("Validation failed")
 
-	for _, err := range validationErrs {
+	for _, err := range errs {
+		var traceMsg string
 		if err.Value != nil {
-			r.appendTraceInternal("(" + err.Field + ") " + err.Message + ": " + fmt.Sprintf("%v", err.Value))
+			traceMsg = fmt.Sprintf("(%s) %s: %v", err.Field, err.Message, err.Value)
 		} else {
-			r.appendTraceInternal("(" + err.Field + ") " + err.Message)
+			traceMsg = fmt.Sprintf("(%s) %s", err.Field, err.Message)
 		}
+		r.appendTraceInternal("validation", traceMsg)
 	}
 
+	return r
+}
+
+// WithConfig sets a custom configuration for this specific response instance
+// This overrides the global configuration for this response only
+func (r *Response) WithConfig(config Config) *Response {
+	// Validate and set defaults for invalid config values
+	if config.MaxTraceSize <= 0 {
+		config.MaxTraceSize = defaultConfig.MaxTraceSize
+	}
+	if config.ResponseSizeLimit <= 0 {
+		config.ResponseSizeLimit = defaultConfig.ResponseSizeLimit
+	}
+	if config.MaxInterceptorAmount <= 0 {
+		config.MaxInterceptorAmount = defaultConfig.MaxInterceptorAmount
+	}
+	if config.DefaultContentType == "" {
+		config.DefaultContentType = defaultConfig.DefaultContentType
+	}
+
+	r.config = config
+
+	// Update ContentType if it wasn't explicitly set
+	if r.ContentType == "" || r.ContentType == getConfig().DefaultContentType {
+		r.ContentType = config.DefaultContentType
+	}
+
+	return r
+}
+
+// getResponseConfig returns the config for this specific response
+// Falls back to global config if no specific config is set
+func (r *Response) getResponseConfig() Config {
+	// Check if this response has a specific config set
+	// We detect this by checking if any field differs from zero value
+	if r.config.MaxTraceSize > 0 || r.config.ResponseSizeLimit > 0 ||
+		r.config.MaxInterceptorAmount > 0 || r.config.DefaultContentType != "" {
+		return r.config
+	}
+	return getConfig()
+}
+
+type PaginationMeta struct {
+	Page       int   `json:"page"`
+	Limit      int   `json:"limit"`
+	Total      int64 `json:"total"`
+	TotalPages int   `json:"total_pages"`
+	HasNext    bool  `json:"has_next"`
+	HasPrev    bool  `json:"has_prev"`
+	NextPage   *int  `json:"next_page,omitempty"`
+	PrevPage   *int  `json:"prev_page,omitempty"`
+}
+
+type PaginationParams struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+}
+
+const (
+	defaultPage  = 1
+	defaultLimit = 20
+	maxLimit     = 100
+)
+
+func ParsePaginationFromQuery(values url.Values) PaginationParams {
+	page, err := strconv.Atoi(values.Get("page"))
+	if err != nil || page < 1 {
+		page = defaultPage
+	}
+
+	limit, err := strconv.Atoi(values.Get("limit"))
+	if err != nil || limit < 1 {
+		limit = defaultLimit
+	}
+	if limit > maxLimit {
+		limit = maxLimit
+	}
+
+	return PaginationParams{
+		Page:  page,
+		Limit: limit,
+	}
+}
+
+func CreatePaginationMeta(params PaginationParams, total int64) PaginationMeta {
+	totalPages := int(math.Ceil(float64(total) / float64(params.Limit)))
+	hasNext := params.Page < totalPages
+	hasPrev := params.Page > 1
+
+	meta := PaginationMeta{
+		Page:       params.Page,
+		Limit:      params.Limit,
+		Total:      total,
+		TotalPages: totalPages,
+		HasNext:    hasNext,
+		HasPrev:    hasPrev,
+	}
+
+	if hasNext {
+		nextPage := params.Page + 1
+		meta.NextPage = &nextPage
+	}
+
+	if hasPrev {
+		prevPage := params.Page - 1
+		meta.PrevPage = &prevPage
+	}
+
+	return meta
+}
+
+func (r *Response) WithPagination(params PaginationParams, total int64) *Response {
+	meta := CreatePaginationMeta(params, total)
+	r.PaginationData = meta
 	return r
 }
 
@@ -241,7 +475,7 @@ func (r *Response) WithModule(module string) *Response {
 	return r
 }
 
-func (r *Response) WithMessage(message string) *Response {
+func (r *Response) WithMsg(message string) *Response {
 	r.Message = message
 	return r
 }
@@ -251,19 +485,35 @@ func (r *Response) WithData(data any) *Response {
 	return r
 }
 
+func (r *Response) WithTracePrefix(prefix string) *Response {
+	r.TracePrefix = prefix
+	return r
+}
+
 // Takes in strings, errors and Stringers
-func (r *Response) AppendTrace(trace ...any) *Response {
-	return r.appendTrace(false, trace...)
+func (r *Response) AddTrace(trace ...any) *Response {
+	if r.TracePrefix == "" {
+		return r.appendTrace("trace", false, trace...)
+	}
+	return r.appendTrace(r.TracePrefix, false, trace...)
+}
+
+// Takes in strings, errors and Stringers
+func (r *Response) AddPrefixedTrace(prefix string, trace ...any) *Response {
+	if prefix == "" {
+		return r.appendTrace("trace", false, trace...)
+	}
+	return r.appendTrace(prefix, false, trace...)
 }
 
 // AppendTraceInternal is for internal use and can override the last trace entry when full
-func (r *Response) appendTraceInternal(trace ...any) *Response {
-	return r.appendTrace(true, trace...)
+func (r *Response) appendTraceInternal(prefix string, trace ...any) *Response {
+	return r.appendTrace(prefix, true, trace...)
 }
 
 // Internal trace appending logic
-func (r *Response) appendTrace(force bool, trace ...any) *Response {
-	config := getConfig()
+func (r *Response) appendTrace(prefix string, force bool, trace ...any) *Response {
+	config := r.getResponseConfig()
 
 	for _, t := range trace {
 		var traceStr string
@@ -278,13 +528,15 @@ func (r *Response) appendTrace(force bool, trace ...any) *Response {
 			continue
 		}
 
+		traceStrFull := prefix + ": " + traceStr
+
 		if len(r.Trace) < config.MaxTraceSize {
-			r.Trace = append(r.Trace, traceStr)
+			r.Trace = append(r.Trace, traceStrFull)
 		} else {
 			if force && config.MaxTraceSize > 0 {
 				r.Trace[config.MaxTraceSize-1] = traceStr
 			} else if !force && config.MaxTraceSize > 0 {
-				truncMsg := fmt.Sprintf("... (trace truncated, max size: %d)", config.MaxTraceSize)
+				truncMsg := fmt.Sprintf("Error: (trace truncated, max size: %d)", config.MaxTraceSize)
 				if r.Trace[config.MaxTraceSize-1] != truncMsg {
 					r.Trace[config.MaxTraceSize-1] = truncMsg
 				}
@@ -298,9 +550,8 @@ func (r *Response) appendTrace(force bool, trace ...any) *Response {
 // Does nothing unless using a custom response
 func (r *Response) WithCode(code int) *Response {
 	if err := validateStatusCode(code); err != nil {
-		return InternalServerError().
-			WithMessage("Invalid status code set").
-			appendTraceInternal(err)
+		return InternalServerError("Invalid status code set").
+			appendTraceInternal("error", err)
 	} else {
 		r.Code = code
 	}
@@ -336,7 +587,7 @@ func (r *Response) estimateSize() (int, error) {
 
 // validateResponseSize checks if the response size is within limits
 func (r *Response) validateResponseSize() error {
-	config := getConfig()
+	config := r.getResponseConfig()
 	if !config.EnableSizeValidation {
 		return nil
 	}
@@ -360,9 +611,7 @@ func (r *Response) validateResponseSize() error {
 func (r *Response) SendWithContext(ctx context.Context, w http.ResponseWriter) {
 	if err := r.validateResponseSize(); err != nil {
 		// Create a new error response that fits within limits
-		errorResp := InternalServerError().
-			WithMessage("Response too large").
-			WithContentType(r.ContentType)
+		errorResp := r.WithCode(http.StatusInternalServerError).WithContentType(getConfig().DefaultContentType)
 		errorResp.sendInternal(ctx, w)
 		return
 	}
@@ -396,7 +645,7 @@ func (r *Response) sendInternal(ctx context.Context, w http.ResponseWriter) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(r); err != nil {
 		// If encoding fails, we can't send the original response so we leave it to Interceptors
-		r.appendTraceInternal((&EncodingError{Inner: err}).Error())
+		r.appendTraceInternal("internal error", (&EncodingError{Inner: err}).Error())
 	}
 }
 
@@ -411,7 +660,7 @@ func (r *Response) GetResponseStats() map[string]any {
 }
 
 func (r *Response) IsWithinLimits() bool {
-	config := getConfig()
+	config := r.getResponseConfig()
 
 	if len(r.Trace) > config.MaxTraceSize {
 		return false
