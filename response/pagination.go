@@ -1,20 +1,18 @@
 package response
 
 import (
-	"math"
 	"net/url"
 	"strconv"
 )
 
 type PaginationMeta struct {
-	Page       int   `json:"page"`
-	Limit      int   `json:"limit"`
-	Total      int64 `json:"total"`
-	TotalPages int   `json:"total_pages"`
-	HasNext    bool  `json:"has_next"`
-	HasPrev    bool  `json:"has_prev"`
-	NextPage   *int  `json:"next_page,omitempty"`
-	PrevPage   *int  `json:"prev_page,omitempty"`
+	Page     int   `json:"page"`
+	Limit    int   `json:"limit"`
+	Total    int64 `json:"total"`
+	HasNext  bool  `json:"has_next"`
+	HasPrev  bool  `json:"has_prev"`
+	NextPage *int  `json:"next_page,omitempty"`
+	PrevPage *int  `json:"prev_page,omitempty"`
 }
 
 type PaginationParams struct {
@@ -49,17 +47,15 @@ func ParsePaginationFromQuery(values url.Values) PaginationParams {
 }
 
 func CreatePaginationMeta(params PaginationParams, total int64) PaginationMeta {
-	totalPages := int(math.Ceil(float64(total) / float64(params.Limit)))
-	hasNext := params.Page < totalPages
+	hasNext := params.Page < int(total)
 	hasPrev := params.Page > 1
 
 	meta := PaginationMeta{
-		Page:       params.Page,
-		Limit:      params.Limit,
-		Total:      total,
-		TotalPages: totalPages,
-		HasNext:    hasNext,
-		HasPrev:    hasPrev,
+		Page:    params.Page,
+		Limit:   params.Limit,
+		Total:   total,
+		HasNext: hasNext,
+		HasPrev: hasPrev,
 	}
 
 	if hasNext {
