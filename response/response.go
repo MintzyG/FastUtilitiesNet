@@ -8,16 +8,16 @@ import (
 )
 
 type Response struct {
-	Module         string         `json:"module,omitempty"`
-	Message        string         `json:"message,omitempty"`
-	Data           any            `json:"data,omitempty"`
-	Trace          []string       `json:"trace,omitempty"`
-	Timestamp      time.Time      `json:"timestamp,omitempty"`
-	PaginationData PaginationMeta `json:"pagination,omitempty"`
-	Code           int            `json:"code,omitempty"`
-	ContentType    string         `json:"-"`
-	TracePrefix    string         `json:"-"`
-	config         Config         `json:"-"`
+	Module         string          `json:"module,omitempty"`
+	Message        string          `json:"message,omitempty"`
+	Data           any             `json:"data,omitempty"`
+	Trace          []string        `json:"trace,omitempty"`
+	Timestamp      time.Time       `json:"timestamp,omitempty"`
+	PaginationData *PaginationMeta `json:"pagination,omitempty"`
+	Code           int             `json:"code,omitempty"`
+	ContentType    string          `json:"-"`
+	TracePrefix    string          `json:"-"`
+	config         Config          `json:"-"`
 }
 
 // WithConfig sets a custom configuration for this specific response instance

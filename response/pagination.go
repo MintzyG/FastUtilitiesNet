@@ -77,6 +77,6 @@ func CreatePaginationMeta(params PaginationParams, total int64) PaginationMeta {
 
 func (r *Response) WithPagination(params PaginationParams, total int64) *Response {
 	meta := CreatePaginationMeta(params, total)
-	r.PaginationData = meta
+	r.PaginationData = &meta
 	return r
 }
