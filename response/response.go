@@ -215,16 +215,16 @@ func WithValidationErrors(errors any) *Response {
 	default:
 		return InternalServerError().
 			WithMessage("Invalid validation errors type").
-			AppendTraceInternal(fmt.Sprintf("Expected ValidationErr or []ValidationErr, got %T", errors))
+			appendTraceInternal(fmt.Sprintf("Expected ValidationErr or []ValidationErr, got %T", errors))
 	}
 
 	r := BadRequest().WithMessage("Validation failed")
 
 	for _, err := range validationErrs {
 		if err.Value != nil {
-			r.AppendTraceInternal("(" + err.Field + ") " + err.Message + ": " + fmt.Sprintf("%v", err.Value))
+			r.appendTraceInternal("(" + err.Field + ") " + err.Message + ": " + fmt.Sprintf("%v", err.Value))
 		} else {
-			r.AppendTraceInternal("(" + err.Field + ") " + err.Message)
+			r.appendTraceInternal("(" + err.Field + ") " + err.Message)
 		}
 	}
 
@@ -257,7 +257,7 @@ func (r *Response) AppendTrace(trace ...any) *Response {
 }
 
 // AppendTraceInternal is for internal use and can override the last trace entry when full
-func (r *Response) AppendTraceInternal(trace ...any) *Response {
+func (r *Response) appendTraceInternal(trace ...any) *Response {
 	return r.appendTrace(true, trace...)
 }
 
@@ -300,7 +300,7 @@ func (r *Response) WithCode(code int) *Response {
 	if err := validateStatusCode(code); err != nil {
 		return InternalServerError().
 			WithMessage("Invalid status code set").
-			AppendTraceInternal(err)
+			appendTraceInternal(err)
 	} else {
 		r.Code = code
 	}
@@ -396,7 +396,7 @@ func (r *Response) sendInternal(ctx context.Context, w http.ResponseWriter) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(r); err != nil {
 		// If encoding fails, we can't send the original response so we leave it to Interceptors
-		r.AppendTraceInternal((&EncodingError{Inner: err}).Error())
+		r.appendTraceInternal((&EncodingError{Inner: err}).Error())
 	}
 }
 
