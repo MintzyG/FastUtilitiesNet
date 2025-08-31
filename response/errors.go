@@ -1,7 +1,17 @@
 package response
 
 import (
+	"errors"
 	"fmt"
+)
+
+var (
+	ErrConfigInvalid     = errors.New("configuration error")
+	ErrValidationFailed  = errors.New("validation failed")
+	ErrSizeLimitExceeded = errors.New("size limit exceeded")
+	ErrEncodingFailed    = errors.New("encoding failed")
+	ErrTraceFailed       = errors.New("trace error")
+	ErrInterceptorFailed = errors.New("interceptor error")
 )
 
 type ConfigError struct {
