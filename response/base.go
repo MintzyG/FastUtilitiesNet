@@ -19,6 +19,7 @@ func newBaseResponse(code int, msg ...string) *Response {
 		Message:     message,
 		Timestamp:   time.Now(),
 		ContentType: config.DefaultContentType,
+		Module:      config.DefaultModule,
 	}
 }
 

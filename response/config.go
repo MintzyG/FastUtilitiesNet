@@ -8,6 +8,7 @@ type Config struct {
 	MaxInterceptorAmount int
 	DefaultContentType   string
 	EnableSizeValidation bool
+	DefaultModule        string
 }
 
 // Default configuration values
@@ -17,6 +18,7 @@ var defaultConfig = Config{
 	MaxInterceptorAmount: 20,
 	DefaultContentType:   "application/json",
 	EnableSizeValidation: true,
+	DefaultModule:        "GoResponse",
 }
 
 // Global configuration (thread-safe)
