@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"encoding/json/v2"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"reflect"
