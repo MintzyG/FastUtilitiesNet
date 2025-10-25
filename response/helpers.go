@@ -1,6 +1,6 @@
 package response
 
-import "encoding/json/v2"
+import "encoding/json"
 
 func validateStatusCode(code int) error {
 	if code < 100 || code > 599 {

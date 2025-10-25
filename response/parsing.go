@@ -1,7 +1,7 @@
 package response
 
 import (
-	"encoding/json/v2"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"

@@ -2,7 +2,7 @@ package response
 
 import (
 	"context"
-	"encoding/json/v2"
+	"encoding/json"
 	"net/http"
 	"time"
 )
