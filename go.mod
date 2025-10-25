@@ -1,3 +1,3 @@
-module github.com/MintzyG/GoResponse
+module github.com/MintzyG/FastUtilitiesNet
 
-go 1.25.0
+go 1.25.3
